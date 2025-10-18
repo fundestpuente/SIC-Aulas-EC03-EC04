@@ -1,0 +1,54 @@
+# Matrices:
+A = [[1, 0, 2], [2, 1, 1], [3, 2, 0]]
+B = [[0, 1, 1], [1, 2, 0], [2, 1, 3]]
+
+#Calcula A × B
+#Calcula la traspuesta y determinante de A.
+
+#Vectores:
+u = [2, -1, 3]
+v = [1, 4, -2]
+
+#Calcula el producto interno u·v y determina si son ortogonales.
+#Calcula el ángulo entre u y v.
+#Derivadas: g(x, y) = x*2 * y + sin(xy)
+#Calcula las derivadas parciales ∂g/∂x y ∂g/∂y.
+#Evalúa en el punto (x=1, y=π/2). 
+
+import numpy as np
+import sympy as sp
+
+A= np.array(A)
+B= np.array(B)
+# Matrices
+multiplicaion = np.dot(A, B)
+print("A × B =\n", multiplicaion)
+A_transpuesta = A.T
+A_determinante = np.linalg.det(A)
+print("Transpuesta de A =\n", A_transpuesta)
+print("Determinante de A =", A_determinante)
+
+# Vectores
+u = np.array(u)
+v = np.array(v)
+producto_interno = np.dot(u, v)
+print("Producto interno u·v =", producto_interno)
+print("¿Son ortogonales?", "Sí son ortogonales" if producto_interno == 0 else "No son ortogonales")
+
+# Ángulo entre u y v
+cos_theta = producto_interno / (np.linalg.norm(u) * np.linalg.norm(v)) 
+angulo = np.arccos(cos_theta) * (180 / np.pi)
+print("Ángulo entre u y v =", angulo, "grados")
+
+# Derivadas parciales
+x, y = sp.symbols('x y')
+g = x*2 * y + sp.sin(x * y)
+dg_dx = sp.diff(g, x)
+dg_dy = sp.diff(g, y)
+print("∂g/∂x =", dg_dx)
+print("∂g/∂y =", dg_dy)
+print("Evaluación en (x=1, y=π/2):")
+evaluacion_dx = dg_dx.subs({x: 1, y: sp.pi/2})
+evaluacion_dy = dg_dy.subs({x: 1, y: sp.pi/2})
+print("∂g/∂x =", evaluacion_dx)
+print("∂g/∂y =", evaluacion_dy)
