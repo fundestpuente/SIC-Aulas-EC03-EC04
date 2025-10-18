@@ -1,0 +1,114 @@
+#EJERCICIO 1: Daniela Mata Camacho
+#18/10/2025
+
+"""
+Ejercicio 1
+Matrices:
+A = [[1, 2], [3, 4]]
+B = [[2, 0], [1, 2]]
+
+Calcula A + B, A - B y el producto matricial A × B.
+Calcula la traspuesta de A y la inversa de B (si existe).
+Vectores:
+u = [1, 2]
+v = [3, -1]
+
+Calcula el producto interno u·v.
+Calcula la magnitud de cada vector.
+Derivadas:
+f(x) = x3 + 2*x2 + x
+
+Calcula la derivada primera y segunda de f(x).
+Evalúa ambas derivadas en x = 1. 
+"""
+#============================================================================================================================
+
+# Parte I de Matrices=============================
+
+import numpy as np
+
+#SUMA=============================================
+A = np.array ([[1, 2], [3, 4]])
+B = np.array ([[2, 0], [1, 2]])
+
+suma = A + B
+print(f"\nSuma de las matrices\n {A} + {B} es =")
+print(suma)
+
+#RESTA============================================
+
+resta = A - B
+print(f"\nResta de las matrices\n {A} - {B} es =")
+print(resta)
+
+#PRODUCTO MATRICIAL A x B==========================
+
+print("\nProducto Matricial de A x B = ")
+print(np.dot(A, B))
+
+#TRANSPUESTA DE A==================================
+
+print("\nTranspuesta de A:")
+print(A.T)
+
+#INVERSA DE B=======================================
+
+determinante_B = np.linalg.det(B)
+
+if determinante_B != 0:
+    inversa_B = np.linalg.inv(B)
+    print("\nInversa de B: \n", inversa_B)
+
+else:
+    print("La matriz no existe")
+
+#============================================================================================================================
+
+#Parte 2 Vectores===================================
+
+u = np.array([1, 2])
+v = np.array([3, -1])
+
+#PRODUCTO INTERNO===================================
+
+producto_interno = np.dot(u, v)
+print("Producto Interno:", producto_interno)
+
+#CALCULO DE LA MAGNITUD=============================
+
+magnitud_u = np.linalg.norm(u)
+print("\nMagnitud del Vector 'u' = ", magnitud_u)
+
+magnitud_v = np.linalg.norm(v)
+print("\nMagnitud del Vector 'v' = ", magnitud_v)
+
+#=============================================================================================================================
+
+#Parte 3 Derivadas===================================
+
+import sympy as sp
+
+# f(x) = x3 + 2*x2 + x
+
+x = sp.symbols('x')
+f = x**3 + 2*x**2 + x
+
+#Derivada Primera======================================
+
+df = sp.diff(f, x)
+print("Derivada primera de f(x) =", df)
+
+#Derivada Segunda=======================================
+
+d2f = sp.diff(f, x, 2)
+print("Deriva segunda de f(x) =", d2f)
+
+#EVALUACION DE LAS DERIVADAS EN X = 1 ==================
+
+x_valor = 1
+
+df_x = df.subs(x, x_valor)
+print("Derivada primera con x = 1: ", df_x)
+
+d2f_x = d2f.subs(x, x_valor)
+print("Derivada segunda con x = 1: ", d2f_x) 
