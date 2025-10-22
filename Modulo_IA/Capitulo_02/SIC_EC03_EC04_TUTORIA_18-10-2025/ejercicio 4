@@ -1,0 +1,85 @@
+import numpy as np
+import sympy as sp
+from math import acos, degrees
+
+
+# Resolucion del ejercicio 4
+
+A = np.array([[1, 2, 0],
+              [0, 1, 1],
+              [3, 0, 2]])
+
+B = np.array([[2, 1, 1],
+              [1, 0, 3],
+              [0, 2, 1]])
+
+# Calculo  A × B
+producto_matrices = A.dot(B)
+print("El resultado de A × B =\n", producto_matrices)
+
+# Traspuesta de B
+transpuesta_BT = B.T
+print("La transpuesta de B es \nB^T =\n", transpuesta_BT)
+
+# Determinante e inversa de A
+A_sym = sp.Matrix(A)
+detA = A_sym.det()
+print("\nEl determinante de A =", detA)
+
+if detA != 0:
+    A_inv = A_sym.inv()
+    print("\nInversa de A =")
+    sp.pprint(A_inv)
+else:
+    print("\nA no tiene inversa (determinante = 0)")
+
+
+# Vectores
+u = np.array([1, -2, 3], )
+v = np.array([0, 1, 4],)
+
+# Producto interno
+dot_uv = np.dot(u, v)
+print("\nProducto interno u·v =", dot_uv)
+
+# Calculo de Magnitud
+norm_u = np.linalg.norm(u)
+norm_v = np.linalg.norm(v)
+print("||u|| =", norm_u)
+print("||v|| =", norm_v)
+
+# Ángulo entre los vectores
+cos_theta = dot_uv / (norm_u * norm_v)
+cos_theta = max(min(cos_theta, 1.0), -1.0)
+theta_rad = acos(cos_theta)
+theta_deg = degrees(theta_rad)
+
+print(f"Ángulo entre u y v: {theta_rad:.6f} rad  = {theta_deg:.2f}°")
+
+# Ejercicio derivadas
+
+x = sp.Symbol('x', real=True)
+f = x**4 - 3*x**3 + 2*x - 5
+
+# Derivadas
+primera_derivada = sp.diff(f, x)
+segunda_derivada = sp.diff(primera_derivada, x)
+
+print("\nFunción f(x) =", f)
+print("Primera derivada f'(x) =", primera_derivada)
+print("Segunda derivada f''(x) =", segunda_derivada)
+
+# Evaluacion en x = 2
+f1_at2 = primera_derivada.subs(x, 2)
+f2_at2 = segunda_derivada.subs(x, 2)
+print("\nLa funcion evaluada en x = 2:")
+print("f'(2) =", f1_at2)
+print("f''(2) =", f2_at2)
+
+# Comentario de la concavidad
+if f2_at2 > 0:
+    print("Comentario concavidad: cóncava hacia arriba (mínimo local posible)")
+elif f2_at2 < 0:
+    print("Comentario concavidad: cóncava hacia abajo (máximo local posible)")
+else:
+    print("Comentario concavidad: punto de inflexión (segunda derivada = 0)")
