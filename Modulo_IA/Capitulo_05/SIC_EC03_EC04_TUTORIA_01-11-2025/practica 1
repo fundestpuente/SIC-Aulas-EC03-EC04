@@ -1,0 +1,82 @@
+
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# Importar los modelos
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
+
+SEED = 42
+np.random.seed(SEED)
+
+
+url_wine = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+
+
+df_wine = pd.read_csv(url_wine, sep=';')
+
+
+x = df_wine.drop('quality', axis=1)
+y = df_wine['quality']
+
+plt.figure(figsize=(12, 10)) 
+sns.heatmap(df_wine.corr(), annot=True, cmap='coolwarm', fmt='.2f')
+plt.title('Matriz de Correlación para "Wine Quality"')
+plt.show()
+
+test_size = 0.3
+x_train, x_test, y_train, y_test = train_test_split(x, y, 
+                                                    test_size=test_size, 
+                                                    random_state=SEED,
+                                                    stratify=y) 
+
+
+scaler = StandardScaler()
+x_train_scaled = scaler.fit_transform(x_train)
+x_test_scaled = scaler.transform(x_test)
+
+
+def evaluar_modelo(modelo, x_tr, x_ts, y_tr, y_ts):
+    """
+    Entrena, predice y calcula la precisión de un modelo.
+    """
+    modelo.fit(x_tr, y_tr)
+    pred = modelo.predict(x_ts)
+    return accuracy_score(y_ts, pred)
+
+resultados = {}
+
+# --- Naives Bayes ---
+
+nb_model = GaussianNB()
+resultados['Naives Bayes'] = evaluar_modelo(nb_model, x_train, x_test, y_train, y_test)
+
+# --- K-Nearest Neighbors (KNN) ---
+
+knn_model = KNeighborsClassifier(n_neighbors=5)
+resultados['KNN'] = evaluar_modelo(knn_model, x_train_scaled, x_test_scaled, y_train, y_test)
+
+# --- Regresión Logística ---
+
+log_model = LogisticRegression(solver='liblinear', random_state=SEED, max_iter=1000)
+resultados['Regresión Logística'] = evaluar_modelo(log_model, x_train_scaled, x_test_scaled, y_train, y_test)
+
+# --- Árbol de Decisión ---
+
+tree_model = DecisionTreeClassifier(random_state=SEED)
+resultados['Árbol de Decisión'] = evaluar_modelo(tree_model, x_train, x_test, y_train, y_test)
+
+
+df_resultados = pd.DataFrame(list(resultados.items()), columns=['Modelo', 'Precisión'])
+df_resultados = df_resultados.sort_values(by='Precisión', ascending=False)
+
+print("=== Comparación de Modelos ===")
+print(df_resultados)
