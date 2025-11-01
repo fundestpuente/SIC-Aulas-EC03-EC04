@@ -1,0 +1,105 @@
+# Daniela Mata Camacho.
+# Ejercicio Modelo de Regresion Lineal
+# 25 - 10 -2025
+
+# Predecir ventas futuras a partir del presupuesto en publicidad de cada medio (periodico, tv y radio).
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error
+
+
+
+url = "https://raw.githubusercontent.com/selva86/datasets/master/Advertising.csv"
+df = pd.read_csv(url, sep=",")
+
+print("========VISTA DEL DATASET ORIGINAL========")
+print(df.head())
+
+print("\n========COLUMNAS========")
+print(df.columns.tolist())
+
+print("\n=======Informacion General del Archivo=======\n")
+print(df.info())
+
+# PASO 1 = INSPECCION DE DATOS ======================================================================
+
+print("\n=======VALORES NULOS=======")
+print(df.isnull().sum())
+
+# PASO 2 = DIVIDIR DATOS DE ENTRENAMIENTO Y DATOS DE PRUEBA =========================================
+
+x = df.drop("sales", axis = 1) 
+y = df["sales"]
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 42)
+
+print("\n======================================================")
+print(f"Datos de Entrenamiento: {x_train.shape}")
+print(f"Datos de Prueba: {x_test.shape}")
+
+# PASO 3 = ESCALAMIENTO DE CARACTERISTICAS ==========================================================
+
+scaler = StandardScaler()
+x_train_scaled = scaler.fit_transform(x_train)
+x_test_scaled = scaler.transform(x_test)
+
+# PASO 4 = CREACION Y ENTRENAMIENTO DLE MODELO DE REGRESION LINEAL MULTIPLE  ========================
+
+model = LinearRegression()
+model.fit(x_train_scaled, y_train)
+
+y_pred = model.predict(x_test_scaled)
+
+print("\n=======PREDICCIONES DEL MODELO=======")
+print(y_pred[:10])
+
+
+# PASO 5 = EVALUACION DEL MODELO =======================================================================
+
+#Calculo de Metricas
+
+r2 = r2_score(y_test, y_pred)
+mae = mean_absolute_error(y_test, y_pred)
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+
+print("\n=======EVALUACION DEL MODELO======")
+print(f"-Raiz de Error Cuadratico Medio (RMSE): {rmse:.3f}")
+print(f"-Error Absoluto Medio (MAE): {mae:.3f}")
+print(f"-Error Cuadratico Medio (MSE): {mse:.3f}")
+print(f"-Coeficiente de Determinacion (R^2): {r2:.3f}")
+
+
+# PASO 6 = CALCULO DEL RESIDUO ==========================================================================
+
+# Calculo entre la prediccion y la prueba
+
+residuo = y_test - y_pred
+print("\nResiduo entre prediccion y datos de prueba:")
+print(residuo.head())
+
+# PASO 7 = VISUALIZACION DE DATOS =======================================================================
+
+#Evaluacion del Modelo con Graficos
+
+plt.figure(figsize = (10,5))
+plt.scatter(y_pred, residuos, alpha = 0.7, edgecolor = 'purple')
+plt.axhline(y=0, color= 'red', linestyle= '--', linewidth = 2)
+plt.title("Grafico de Residuos del Modelo de Regresion Lineal")
+plt.xlabel("Valores predichos para ventas basadas en presupuestos de publicidad")
+plt.ylabel("Residuos (Error de Prediccion)")
+
+plt.show()
+
+# En base al modelo creado, que evalua la prediccion de ventas en base al presupuesto de diversos
+# medios publicitarios, podemos observar en la grafica que los puntos no forman un patron claro
+# y se encuentran dispersos con relacion a la linea, esto sugiere que el modelo subestimo distintos
+# valores de presupuestos o hay valores atipicos que afectan la prediccion. Sin embargo en base a
+# los resultados obtenidos de las metricas de RMSE, MAE, MSE y R^2, parecen haber errores bajos con
+# relacion a la escala de los datos y los porcentajes de error no son tan altos. 
