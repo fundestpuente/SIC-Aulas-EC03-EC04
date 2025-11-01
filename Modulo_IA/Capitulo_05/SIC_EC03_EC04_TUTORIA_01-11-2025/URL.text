@@ -1,0 +1,4 @@
+Wine Quality (Vino Tinto)
+Descripción: Este conjunto de datos registra 11 propiedades fisicoquímicas de muestras de vino tinto (como acidez, pH y contenido de alcohol).
+Clase a Predecir: Su objetivo es clasificar el vino según su calidad (valores entre 3 y 8). Este es un problema de clasificación multiclase.
+URL: https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv
