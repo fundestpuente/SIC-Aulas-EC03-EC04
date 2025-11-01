@@ -1,0 +1,89 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+
+seed= np.random.seed(42)
+
+from sklearn.datasets import load_breast_cancer
+import pandas as pd
+
+# Load the breast cancer dataset
+data = load_breast_cancer()
+dataframe2 = pd.DataFrame(data.data, columns=data.feature_names)
+dataframe2['target'] = data.target
+
+# Visualización de los primeros datos
+print(dataframe2.head())
+
+# División de variables para el dataset de cáncer de mama
+X2 = dataframe2.drop('target', axis=1)
+y2 = dataframe2['target']
+
+# División de datos en entrenamiento y prueba para el dataset de cáncer de mama
+X2_train, X2_test, y2_train, y2_test = train_test_split(X2, y2, test_size=0.30, random_state=seed)
+
+# Escalado de características para el dataset de cáncer de mama
+scaler2 = StandardScaler()
+x2_train = scaler2.fit_transform(X2_train)
+x2_test = scaler2.transform(X2_test)
+
+# Evaluación de modelos para el dataset de cáncer de mama
+resultados2 = {}
+
+nb_model2 = GaussianNB()
+resultados2["Naive Bayes"] = evaluate_model(nb_model2, x2_train, x2_test, y2_train, y2_test)
+
+knn_model2 = KNeighborsClassifier(n_neighbors=5)
+resultados2["KNN"] = evaluate_model(knn_model2, x2_train, x2_test, y2_train, y2_test)
+
+log_model2 = LogisticRegression(solver="liblinear", random_state=seed)
+resultados2["Logistic Regression"] = evaluate_model(log_model2, x2_train, x2_test, y2_train, y2_test)
+
+tree_model2 = DecisionTreeClassifier(random_state=seed)
+resultados2["Decision Tree"] = evaluate_model(tree_model2, x2_train, x2_test, y2_train, y2_test)
+
+df_resultados2 = pd.DataFrame.from_dict(resultados2, orient='index', columns=['Accuracy'])
+df_resultados2 = df_resultados2.sort_values(by="Accuracy", ascending=False)
+df_resultados2 = df_resultados2.rename_axis('Modelo')
+
+print("Resultados para el dataset de cáncer de mama:")
+print(df_resultados2)
+
+from sklearn.metrics import classification_report, roc_curve, roc_auc_score
+
+# Generate classification report
+y2_pred_log = log_model2.predict(x2_test)
+print(classification_report(y2_test, y2_pred_log))
+
+# Calculate predicted probabilities for ROC curve
+y2_pred_proba_log = log_model2.predict_proba(x2_test)[:, 1]
+
+# Compute ROC curve
+fpr, tpr, thresholds = roc_curve(y2_test, y2_pred_proba_log)
+
+# Calculate AUC
+auc_score = roc_auc_score(y2_test, y2_pred_proba_log)
+
+# Print AUC score
+print(f"AUC: {auc_score:.4f}")
+
+# Realizar predicciones en algunas muestras del conjunto de prueba
+indices_muestra = [0, 5, 10] # Elegir algunos índices del conjunto de prueba
+
+for i in indices_muestra:
+    muestra_para_prediccion = x2_test[i].reshape(1, -1)
+    prediccion = log_model2.predict(muestra_para_prediccion)
+    valor_real = y2_test.iloc[i]
+
+    print(f"Muestra {i}:")
+    print(f"  Predicción: {prediccion[0]}")
+    print(f"  Valor real: {valor_real}")
+    print("-" * 20)
